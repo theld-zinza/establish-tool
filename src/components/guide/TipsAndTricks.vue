@@ -70,6 +70,24 @@
         </div>
       </div>
     </section>
+
+    <!-- Section 3 -->
+    <section>
+      <h3 class="text-lg font-bold text-gray-900 mb-3 border-b pb-1">3. Một số case lỗi</h3>
+      
+      <div class="ml-4 space-y-6">
+        <div>
+          <h4 class="font-semibold text-lg text-indigo-700 mb-2">Không lấy được trạng thái thủ tục</h4>
+          <div class="space-y-4">
+            <div class="bg-white border rounded-lg p-4 shadow-sm">
+              <ul class="list-disc list-inside space-y-1 text-sm text-gray-600 ml-2">
+                <li>Check lại logs, có thể do user mất access_key, sau đó lấy lại access_key bằng thẻ khác với thẻ nộp thủ tục ban đầu</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 

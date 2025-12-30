@@ -58,9 +58,9 @@ const activeTab = ref('documents')
 
 const tabs = [
   { id: 'documents', label: 'Documents' },
+  { id: 'tips-and-tricks', label: 'Tips and Tricks' },
   { id: 'submit-establish', label: 'Submit Establish' },
   { id: 'submit-post-establish', label: 'Submit Post Establish' },
-  { id: 'tips-and-tricks', label: 'Tips and Tricks' },
 ]
 
 const activeTabComponent = computed(() => {
