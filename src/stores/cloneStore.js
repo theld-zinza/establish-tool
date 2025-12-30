@@ -7,11 +7,16 @@ const TABLE_NAMES = [
   't_project_company_info',
   't_establish_submission_info',
   't_moj_fields',
-  't_establish_request_procedures'
+  't_establish_request_procedures',
+  't_establish_request_messages'
 ]
 
 // Constants for SQL generation
 const EXCLUDED_COLUMNS = ['project_hash', 'project_id', 'auth_id', 'company_id']
+
+const TABLE_SKIPPED_COLUMNS = {
+  't_projects': ['is_old_data', 'old_step', 'old_step_name']
+}
 
 // Initialize empty objects for tables
 const createEmptyTableObject = () => TABLE_NAMES.reduce((acc, table) => {
@@ -93,12 +98,12 @@ export const useCloneStore = defineStore('clone', {
       const sql = this.prodSql[tableName]
       if (!sql || !sql.trim()) return ''
       
-      // Special handling for t_establish_request_procedures
-      if (tableName === 't_establish_request_procedures') {
+      // Special handling for t_establish_request_procedures and t_establish_request_messages
+      if (['t_establish_request_procedures', 't_establish_request_messages'].includes(tableName)) {
         return this.generateDeleteAndInsertSQL(tableName, sql)
       }
       
-      const data = this.parseSqlData(sql)
+      const data = this.parseSqlData(sql, tableName)
       if (!data) return ''
       
       // Determine WHERE clause based on table
@@ -106,28 +111,13 @@ export const useCloneStore = defineStore('clone', {
         ? `company_id IN (SELECT p.company_id FROM (SELECT company_id FROM t_projects WHERE project_hash = "${this.localColumns.project_hash}") p)`
         : `project_id IN (SELECT p.project_id FROM (SELECT project_id FROM t_projects WHERE project_hash = "${this.localColumns.project_hash}") p)`
       
-      const updateSQL = `UPDATE ${tableName} SET ${data} WHERE ${whereClause};`
-      
-      // Generate session mode block with the actual SQL
-      const sessionBlock = this.generateSessionModeBlock()
-      return sessionBlock.replace('-- Your SQL statements here', updateSQL)
+      return `UPDATE ${tableName} SET ${data} WHERE ${whereClause};`
     },
     
-    // Generate SQL mode session block
-    generateSessionModeBlock() {
-      return [
-        '-- Disable STRICT_TRANS_TABLES to allow NULL values in NOT NULL columns',
-        'SET SESSION sql_mode = REPLACE(@@sql_mode, \'STRICT_TRANS_TABLES\', \'\');',
-        '',
-        '-- Your SQL statements here',
-        '',
-        '-- Restore STRICT_TRANS_TABLES mode',
-        'SET SESSION sql_mode = CONCAT(@@sql_mode, \',STRICT_TRANS_TABLES\');'
-      ].join('\n')
-    },
+
     
     // Parse SQL data to extract column=value pairs
-    parseSqlData(sql) {
+    parseSqlData(sql, tableName = '') {
       if (!sql || !sql.trim()) return ''
       
       const lines = sql.trim().split('\n')
@@ -175,7 +165,8 @@ export const useCloneStore = defineStore('clone', {
       }
       
       const updatePairs = []
-      const excludedColumns = EXCLUDED_COLUMNS
+      const tableSkipped = TABLE_SKIPPED_COLUMNS[tableName] || []
+      const excludedColumns = [...EXCLUDED_COLUMNS, ...tableSkipped]
       
       for (let i = 0; i < headers.length; i++) {
         const column = headers[i]
@@ -242,11 +233,7 @@ export const useCloneStore = defineStore('clone', {
       })
       
       // Combine all SQL statements
-      const allSQL = [deleteSQL, ...insertStatements].join('\n')
-      
-      // Generate session mode block with the actual SQL
-      const sessionBlock = this.generateSessionModeBlock()
-      return sessionBlock.replace('-- Your SQL statements here', allSQL)
+      return [deleteSQL, ...insertStatements].join('\n')
     },
     
     // Parse row values handling quotes properly

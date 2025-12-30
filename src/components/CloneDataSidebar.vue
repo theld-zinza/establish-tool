@@ -61,7 +61,8 @@ const PROD_TABLES = [
   { key: 't_project_company_info', multiple: false, condition: ['project_id','auth_id','company_id'] },
   { key: 't_establish_submission_info', multiple: false, condition: ['project_id'] },
   { key: 't_moj_fields', multiple: false, condition: ['project_id'] },
-  { key: 't_establish_request_procedures', multiple: true, condition: ['project_id'] }
+  { key: 't_establish_request_procedures', multiple: true, condition: ['project_id'] },
+  { key: 't_establish_request_messages', multiple: true, condition: ['project_id'] }
 ]
 
 // Watch for changes in prodData and copy to prodSql
