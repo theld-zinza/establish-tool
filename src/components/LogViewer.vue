@@ -91,7 +91,10 @@
                 <span class="text-slate-600 font-bold">Details:</span>
               </h4>
               <div class="relative group">
-                <div class="json-highlight overflow-auto detail-pre text-xs">
+                <div 
+                  class="json-highlight overflow-auto detail-pre text-xs"
+                  @mouseup="translator?.handleSelection"
+                >
                   <vue-json-pretty 
                     :data="getLogData(log)"
                     :deep="20"
@@ -117,6 +120,7 @@
     </div>
 
   </div>
+  <TranslationTooltip ref="translator" />
 </template>
 
 <script setup>
@@ -127,6 +131,9 @@ import { useGlobalToast } from '../composables/useToast'
 import Prism from 'prismjs'
 import VueJsonPretty from 'vue-json-pretty'
 import 'vue-json-pretty/lib/styles.css'
+import TranslationTooltip from './TranslationTooltip.vue'
+
+const translator = ref(null)
 
 const logStore = useLogStore()
 const apiStore = useApiStore()
