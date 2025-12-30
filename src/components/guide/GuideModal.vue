@@ -42,6 +42,8 @@
 <script setup>
 import { ref, computed } from 'vue'
 import SubmitEstablishCTCP from './SubmitEstablishCTCP.vue'
+import StatusCodeFlow from './StatusCodeFlow.vue'
+import TipsAndTricks from './TipsAndTricks.vue'
 
 const props = defineProps({
   show: {
@@ -52,18 +54,23 @@ const props = defineProps({
 
 const emit = defineEmits(['close'])
 
-const activeTab = ref('submit-establish')
+const activeTab = ref('documents')
 
 const tabs = [
+  { id: 'documents', label: 'Documents' },
   { id: 'submit-establish', label: 'Submit Establish' },
   { id: 'submit-post-establish', label: 'Submit Post Establish' },
-  { id: 'status_code_flow', label: 'Status Code Flow' },
+  { id: 'tips-and-tricks', label: 'Tips and Tricks' },
 ]
 
 const activeTabComponent = computed(() => {
   switch (activeTab.value) {
     case 'submit-establish':
       return SubmitEstablishCTCP
+    case 'documents':
+      return StatusCodeFlow
+    case 'tips-and-tricks':
+      return TipsAndTricks
     default:
       return null
   }

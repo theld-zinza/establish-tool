@@ -90,8 +90,25 @@
               <h4 class="font-medium text-sm mb-2">
                 <span class="text-slate-600 font-bold">Details:</span>
               </h4>
-              <div class="json-highlight overflow-auto detail-pre">
-                <pre class="mono whitespace-pre-wrap text-xs"><code class="language-json" v-html="getFormattedJson(log)"></code></pre>
+              <div class="relative group">
+                <div class="json-highlight overflow-auto detail-pre text-xs">
+                  <vue-json-pretty 
+                    :data="getLogData(log)"
+                    :deep="20"
+                    :show-length="true"
+                    :show-line="true"
+                    :show-icon="true"
+                  />
+                </div>
+                <button 
+                  @click="copyLogDetails(log)"
+                  class="absolute top-6 right-8 p-2 bg-white/90 hover:bg-white text-slate-400 hover:text-indigo-600 rounded shadow-sm border border-slate-200 transition-all opacity-0 group-hover:opacity-100 z-10 sticky-copy-btn"
+                  title="Copy JSON"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  </svg>
+                </button>
               </div>
             </div>
           </div>
@@ -106,10 +123,14 @@
 import { ref, computed, nextTick, watch } from 'vue'
 import { useLogStore } from '../stores/logStore'
 import { useApiStore } from '../stores/apiStore'
+import { useGlobalToast } from '../composables/useToast'
 import Prism from 'prismjs'
+import VueJsonPretty from 'vue-json-pretty'
+import 'vue-json-pretty/lib/styles.css'
 
 const logStore = useLogStore()
 const apiStore = useApiStore()
+const toast = useGlobalToast()
 
 const openItems = ref(new Set())
 const loadedItems = ref(new Set())
@@ -223,5 +244,30 @@ const getApiHighlights = (log) => {
   }
   
   return highlights
+}
+
+const getLogData = (log) => {
+  if (log._detailsObj) return log._detailsObj
+  try {
+    return log.details ? JSON.parse(log.details) : {}
+  } catch (e) {
+    return { error: 'Invalid JSON', content: log.details }
+  }
+}
+
+const copyLogDetails = async (log) => {
+  const content = log._detailsObj ? JSON.stringify(log._detailsObj, null, 2) : (log.details || '')
+  if (!content) {
+    toast.warning('No content to copy')
+    return
+  }
+  
+  try {
+    await navigator.clipboard.writeText(content)
+    toast.success('Copied JSON to clipboard')
+  } catch (err) {
+    toast.error('Failed to copy to clipboard')
+    console.error('Copy failed:', err)
+  }
 }
 </script>

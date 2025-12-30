@@ -161,7 +161,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useLogStore } from '../stores/logStore'
 import { useGlobalToast } from '../composables/useToast'
-import GuideModal from './GuideModal.vue'
+import GuideModal from './guide/GuideModal.vue'
 
 const logStore = useLogStore()
 const toast = useGlobalToast()
@@ -228,7 +228,7 @@ const clearDateFilter = () => {
 const copySql = async () => {
   if (!projectHash.value.trim()) return
   
-  const sql = `SELECT * FROM t_establish_logs where project_hash = "${projectHash.value.trim()}";`
+  const sql = `SELECT * FROM t_establish_logs where project_hash = "${projectHash.value.trim()}" order by id desc;`
   
   try {
     await navigator.clipboard.writeText(sql)

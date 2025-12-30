@@ -8,7 +8,7 @@
 .mono { @apply font-mono; }
 
 /* JSON highlighting styles */
-.json-highlight { @apply bg-slate-50 border border-slate-200 rounded-lg p-3; }
+.json-highlight { @apply bg-[#f5f2f0] border border-slate-200 rounded-lg p-3; }
 .json-highlight pre { @apply m-0 bg-transparent; }
 .json-highlight .token.string { @apply text-green-600; }
 .json-highlight .token.number { @apply text-red-600; }
@@ -16,13 +16,19 @@
 .json-highlight .token.null { @apply text-gray-500; }
 .json-highlight .token.punctuation { @apply text-gray-700; }
 .json-highlight .token.property { @apply text-gray-900 font-semibold; }
+.json-highlight .vjs-tree { @apply bg-transparent; }
+.json-highlight .vjs-value-string { @apply text-green-600; }
+.json-highlight .vjs-value-number { @apply text-red-600; }
+.json-highlight .vjs-value-boolean { @apply text-purple-600; }
+.json-highlight .vjs-value-null { @apply text-gray-500; }
+.json-highlight .vjs-key { @apply text-gray-900 font-semibold; }
 
 /* Accordion styles */
 .accordion-item { @apply border border-slate-200 rounded-lg overflow-hidden; }
 .accordion-header { @apply cursor-pointer p-4 bg-white border-b border-slate-200 transition-colors hover:bg-slate-50; }
 .accordion-content { @apply max-h-0 overflow-hidden transition-all duration-300 ease-out; }
 .accordion-content.open { @apply max-h-screen; }
-.detail-content { @apply p-4 bg-slate-50 border-t border-slate-200; }
+.detail-content { @apply p-4 pl-[100px] bg-slate-50 border-t border-slate-200; }
 .detail-pre { @apply max-h-[44rem]; }
 
 /* Filter styles */
