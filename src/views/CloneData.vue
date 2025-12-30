@@ -53,6 +53,14 @@
         </div>
       </div>
     </main>
+    <ConfirmModal 
+      :show="showCopyConfirm"
+      title="CHÚ Ý"
+      message="Hãy kiểm tra môi trường thật kỹ trước khi chạy SQL. Đảm bảo chỉ chạy SQL ở môi trường test."
+      confirm-text="Đồng Ý và copy SQL"
+      @confirm="executeCopy"
+      @cancel="showCopyConfirm = false"
+    />
   </div>
 </template>
 
@@ -64,6 +72,9 @@ import { useGlobalToast } from '../composables/useToast'
 const cloneStore = useCloneStore()
 const toast = useGlobalToast()
 import CloneDataSidebar from '../components/CloneDataSidebar.vue'
+import ConfirmModal from '../components/ConfirmModal.vue'
+
+const showCopyConfirm = ref(false)
 
 // Generated SQLs for display
 const generatedSQLs = ref([])
@@ -89,18 +100,21 @@ const genUpdateSQL = () => {
 }
 
 // Copy all generated SQLs to clipboard
-const copyAllSQL = async () => {
+const copyAllSQL = () => {
   if (generatedSQLs.value.length === 0) {
     toast.warning('No SQL to copy!')
     return
   }
+  showCopyConfirm.value = true
+}
 
+const executeCopy = async () => {
   try {
     await navigator.clipboard.writeText(generatedSQLs.value.join('\n\n'))
     toast.success('All SQL copied to clipboard!')
+    showCopyConfirm.value = false
   } catch (err) {
     toast.error('Failed to copy SQL to clipboard')
   }
 }
-
 </script>
