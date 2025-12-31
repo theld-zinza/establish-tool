@@ -3,12 +3,12 @@ import { defineStore } from 'pinia'
 // Table configuration constants
 const TABLE_NAMES = [
   't_projects',
+  't_establish_request_procedures',
+  't_establish_request_messages',
   'm_company', 
   't_project_company_info',
   't_establish_submission_info',
   't_moj_fields',
-  't_establish_request_procedures',
-  't_establish_request_messages'
 ]
 
 // Constants for SQL generation
@@ -25,7 +25,7 @@ const createEmptyTableObject = () => TABLE_NAMES.reduce((acc, table) => {
 }, {})
 
 const createTableVisibilityObject = () => TABLE_NAMES.reduce((acc, table) => {
-  acc[table] = table === 't_projects' // Only t_projects visible by default
+  acc[table] = ['t_projects', 't_establish_request_procedures', 't_establish_request_messages'].includes(table) // Only t_projects visible by default
   return acc
 }, {})
 
@@ -98,23 +98,38 @@ export const useCloneStore = defineStore('clone', {
       const sql = this.prodSql[tableName]
       if (!sql || !sql.trim()) return ''
       
+      // Verify SELECT SQL
+      const getVerifySelectSql = (tbl, where) => `\n-- SELECT * FROM ${tbl} WHERE ${where};`
+
+      // Determine WHERE clause based on table
+      const whereClause = tableName === 'm_company' 
+          ? `company_id IN (SELECT p.company_id FROM (SELECT company_id FROM t_projects WHERE project_hash = "${this.localColumns.project_hash}") p)`
+          : `project_id IN (SELECT p.project_id FROM (SELECT project_id FROM t_projects WHERE project_hash = "${this.localColumns.project_hash}") p)`
+
+      // Special handling for t_establish_request_procedures and t_establish_request_messages
       // Special handling for t_establish_request_procedures and t_establish_request_messages
       if (['t_establish_request_procedures', 't_establish_request_messages'].includes(tableName)) {
-        return this.generateDeleteAndInsertSQL(tableName, sql)
+        let result = this.generateDeleteAndInsertSQL(tableName, sql)
+        
+        if (tableName === 't_establish_request_messages') {
+          // Note: Selection from t_establish_request_procedures as requested
+          const extraSql = `-- SELECT * from t_establish_request_procedures where ${whereClause};\n`
+          result = extraSql + result
+        }
+        
+        return result + getVerifySelectSql(tableName, whereClause)
       }
       
       const data = this.parseSqlData(sql, tableName)
       if (!data) return ''
-      
-      // Determine WHERE clause based on table
-      const whereClause = tableName === 'm_company' 
-        ? `company_id IN (SELECT p.company_id FROM (SELECT company_id FROM t_projects WHERE project_hash = "${this.localColumns.project_hash}") p)`
-        : `project_id IN (SELECT p.project_id FROM (SELECT project_id FROM t_projects WHERE project_hash = "${this.localColumns.project_hash}") p)`
-      
-      return `UPDATE ${tableName} SET ${data} WHERE ${whereClause};`
-    },
-    
 
+      let extraSql = ''
+      if (tableName === 't_projects') {
+        extraSql = `-- UPDATE t_establish_info set articles_of_incorporation_authentication_create_way = 3 WHERE ${whereClause};\n`
+      }
+
+      return `-- ${tableName} --\n${extraSql}UPDATE ${tableName} SET ${data} WHERE ${whereClause};${getVerifySelectSql(tableName, whereClause)}`
+    },
     
     // Parse SQL data to extract column=value pairs
     parseSqlData(sql, tableName = '') {
@@ -187,7 +202,7 @@ export const useCloneStore = defineStore('clone', {
       return updatePairs.join(', ')
     },
     
-    // Generate DELETE and INSERT SQL for t_establish_request_procedures
+    // Generate DELETE and INSERT SQL for multiple records
     generateDeleteAndInsertSQL(tableName, sql) {
       // First, generate DELETE statement
       const deleteSQL = `DELETE FROM ${tableName} WHERE project_id IN (SELECT p.project_id FROM (SELECT project_id FROM t_projects WHERE project_hash = "${this.localColumns.project_hash}") p);`
@@ -204,7 +219,7 @@ export const useCloneStore = defineStore('clone', {
       const headers = headerLine.split(', ').map(h => h.trim())
       const insertStatements = []
       
-      // Filter out 'id' column for t_establish_request_procedures
+      // Filter out 'id' column
       const filteredHeaders = headers.filter(header => header !== 'id')
       const idColumnIndex = headers.findIndex(header => header === 'id')
       

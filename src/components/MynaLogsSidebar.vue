@@ -168,7 +168,7 @@ const toast = useGlobalToast()
 
 const logInput = ref('')
 const projectHash = ref('')
-const sortBy = ref('id')
+const sortBy = ref('updated_at')
 const sortDirection = ref('desc')
 const searchQuery = ref('')
 const selectedSteps = ref([])
@@ -228,7 +228,7 @@ const clearDateFilter = () => {
 const copySql = async () => {
   if (!projectHash.value.trim()) return
   
-  const sql = `SELECT * FROM t_establish_logs where project_hash = "${projectHash.value.trim()}" order by id desc;`
+  const sql = `SELECT * FROM t_establish_logs where project_hash = "${projectHash.value.trim()}" order by id updated_at desc;`
   
   try {
     await navigator.clipboard.writeText(sql)

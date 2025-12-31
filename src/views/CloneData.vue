@@ -110,7 +110,7 @@ const copyAllSQL = () => {
 
 const executeCopy = async () => {
   try {
-    await navigator.clipboard.writeText(generatedSQLs.value.join('\n\n'))
+    await navigator.clipboard.writeText(generatedSQLs.value.join('\n\n') + '\n')
     toast.success('All SQL copied to clipboard!')
     showCopyConfirm.value = false
   } catch (err) {

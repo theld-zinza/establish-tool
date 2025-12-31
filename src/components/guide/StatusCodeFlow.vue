@@ -14,7 +14,7 @@
     </div>
     <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
       <a 
-        href="https://docs.google.com/spreadsheets/d/1rhmW3iwXSXAJrSvgqlYgHiIBWZhxvISY/edit?gid=429828868#gid=429828868" 
+        href="https://docs.google.com/spreadsheets/d/1rhmW3iwXSXAJrSvgqlYgHiIBWZhxvISY/edit?gid=555428880#gid=555428880" 
         target="_blank"
         class="inline-flex items-center text-indigo-600 hover:text-indigo-800 font-medium underline mb-6"
       >

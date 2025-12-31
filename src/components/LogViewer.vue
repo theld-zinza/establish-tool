@@ -62,28 +62,40 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                 <div class="space-y-1">
                   <div>
-                    <span class="text-slate-500">Temp Reference Number:</span>
+                    <span class="text-slate-500">Temp Reference Number: </span>
                     <span class="font-mono">{{ log.temp_reference_number ?? "NULL" }}</span>
                   </div>
                   <div>
-                    <span class="text-slate-500">Reference Number:</span>
+                    <span class="text-slate-500">Reference Number: </span>
                     <span class="font-mono">{{ log.reference_number ?? "NULL" }}</span>
                   </div>
                   <div>
-                    <span class="text-slate-500">Project Hash:</span>
+                    <span class="text-slate-500">Project Hash: </span>
                     <span class="font-mono">{{ log.project_hash ?? "NULL" }}</span>
                   </div>
                 </div>
                 <div class="space-y-1">
                   <div>
-                    <span class="text-slate-500">Procedure Code:</span>
+                    <span class="text-slate-500">Procedure Code: </span>
                     <span class="font-mono break-all">{{ log.procedure_code ?? "NULL" }}</span>
                   </div>
                   <div>
-                    <span class="text-slate-500">Auth ID:</span>
+                    <span class="text-slate-500">Auth ID: </span>
                     <span class="font-mono">{{ log.auth_id ?? "NULL" }}</span>
                   </div>
                 </div>
+              </div>
+            </div>
+            <div v-if="getProcedureStatuses(log).length > 0" class="space-y-1 mb-4">
+              <div 
+                v-for="(proc, pid) in getProcedureStatuses(log)"
+                :key="pid"
+                class="flex items-start gap-2"
+              >
+                <span class="text-slate-500 min-w-[120px] text-xs pt-0.5">{{ proc.name }}:</span>
+                <span class="font-mono bg-green-100 text-green-800 border border-green-200 px-2 py-0.5 rounded text-xs whitespace-nowrap">
+                  {{ proc.status }}
+                </span>
               </div>
             </div>
             <div>
@@ -252,6 +264,32 @@ const getApiHighlights = (log) => {
   
   return highlights
 }
+
+const getProcedureStatuses = (log) => {
+  const procedures = []
+  
+  if (log.step?.includes('Get Request Detail API')) {
+    try {
+      const details = log._detailsObj || JSON.parse(log.details || '{}')
+      
+      if (details.result?._embedded?.procedures?.length) {
+        details.result._embedded.procedures.forEach(procedure => {
+          if (procedure.procedure_name || procedure.status_code) {
+            procedures.push({
+              name: procedure.procedure_name || 'Unknown Procedure',
+              status: procedure.status_code || 'N/A'
+            })
+          }
+        })
+      }
+    } catch (err) {
+      console.warn('Failed to parse details for procedure statuses:', err)
+    }
+  }
+  
+  return procedures
+}
+
 
 const getLogData = (log) => {
   if (log._detailsObj) return log._detailsObj
