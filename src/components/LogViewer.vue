@@ -69,19 +69,15 @@
                     <span class="text-slate-500">Reference Number: </span>
                     <span class="font-mono">{{ log.reference_number ?? "NULL" }}</span>
                   </div>
+                </div>
+                <div class="space-y-1">
                   <div>
                     <span class="text-slate-500">Project Hash: </span>
                     <span class="font-mono">{{ log.project_hash ?? "NULL" }}</span>
                   </div>
-                </div>
-                <div class="space-y-1">
                   <div>
                     <span class="text-slate-500">Procedure Code: </span>
                     <span class="font-mono break-all">{{ log.procedure_code ?? "NULL" }}</span>
-                  </div>
-                  <div>
-                    <span class="text-slate-500">Auth ID: </span>
-                    <span class="font-mono">{{ log.auth_id ?? "NULL" }}</span>
                   </div>
                 </div>
               </div>
@@ -90,11 +86,11 @@
               <div 
                 v-for="(proc, pid) in getProcedureStatuses(log)"
                 :key="pid"
-                class="flex items-start gap-2"
+                class="flex items-start gap-1"
               >
-                <span class="text-slate-500 min-w-[120px] text-xs pt-0.5">{{ proc.name }}:</span>
-                <span class="font-mono bg-green-100 text-green-800 border border-green-200 px-2 py-0.5 rounded text-xs whitespace-nowrap">
-                  {{ proc.status }}
+                <span class="text-slate-600 min-w-[120px] text-xs pt-1">{{ proc.name }}：</span>
+                <span class="font-mono bg-green-100 text-green-800 border border-green-200 pt-1 rounded text-xs whitespace-nowrap">
+                  「{{ proc.status }}・{{ proc.status_name }}」
                 </span>
               </div>
             </div>
@@ -277,7 +273,8 @@ const getProcedureStatuses = (log) => {
           if (procedure.procedure_name || procedure.status_code) {
             procedures.push({
               name: procedure.procedure_name || 'Unknown Procedure',
-              status: procedure.status_code || 'N/A'
+              status: procedure.status_code || 'N/A',
+              status_name: procedure.status_name || 'N/A',
             })
           }
         })

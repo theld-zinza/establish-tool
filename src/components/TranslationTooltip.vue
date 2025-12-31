@@ -11,7 +11,7 @@
            <button 
             v-if="!showTranslation"
             @click="translateText" 
-            class="px-3 py-1.5 text-xs font-medium hover:bg-slate-700 flex items-center gap-2 transition-colors w-full whitespace-nowrap"
+            class="px-3 py-1.5 text-sm font-medium hover:bg-slate-700 flex items-center gap-2 transition-colors w-full whitespace-nowrap"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
@@ -30,7 +30,7 @@
         </div>
 
         <!-- Translation Result -->
-        <div v-if="showTranslation" class="p-3 text-xs leading-relaxed border-b border-slate-700/50 bg-slate-800/95 backdrop-blur">
+        <div v-if="showTranslation" class="p-3 text-sm leading-relaxed border-b border-slate-700/50 bg-slate-800/95 backdrop-blur">
           <div v-if="isTranslating" class="flex items-center gap-2 text-slate-400">
             <div class="animate-spin h-3 w-3 border-2 border-slate-500 border-t-white rounded-full"></div>
             Translating...
