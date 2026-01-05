@@ -25,7 +25,7 @@ const createEmptyTableObject = () => TABLE_NAMES.reduce((acc, table) => {
 }, {})
 
 const createTableVisibilityObject = () => TABLE_NAMES.reduce((acc, table) => {
-  acc[table] = ['t_projects', 't_establish_request_procedures', 't_establish_request_messages'].includes(table) // Only t_projects visible by default
+  acc[table] = ['t_projects', 't_establish_request_procedures'].includes(table) // Default visible
   return acc
 }, {})
 
