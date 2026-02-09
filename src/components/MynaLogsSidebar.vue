@@ -4,7 +4,6 @@
     <div class="p-4 border-b">
       <!-- Project Hash Input -->
       <div class="mb-4">
-        <label class="block text-sm font-medium mb-2">project_hash</label>
         <div class="flex space-x-2">
           <input
             v-model="projectHash"
@@ -228,7 +227,7 @@ const clearDateFilter = () => {
 const copySql = async () => {
   if (!projectHash.value.trim()) return
   
-  const sql = `SELECT * FROM t_establish_logs where project_hash = "${projectHash.value.trim()}" order by id updated_at desc;`
+  const sql = `SELECT * FROM t_establish_logs where project_hash = "${projectHash.value.trim()}" order by updated_at desc;`
   
   try {
     await navigator.clipboard.writeText(sql)
