@@ -11,6 +11,9 @@ export const useApiStore = defineStore('api', {
       'User Certificate API',
       'Sign Access Key API',
       'Get user certificate result API',
+			'Get card reader result API',
+			'Request card reader API',
+			'Card Reader Signature API',
       'Authen User API'
     ]
   }),
