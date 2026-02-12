@@ -127,6 +127,18 @@
     <!-- Step Filter -->
     <div v-if="hasData" class="p-4">
       <div class="text-sm font-medium mb-3">Filter by request type</div>
+      <div class="mb-4" :class="{ selected: isAllSelected }">
+        <label class="flex items-center cursor-pointer">
+          <input
+            type="checkbox"
+            :checked="isAllSelected"
+            @change="toggleSelectAll"
+            class="filter-checkbox"
+          />
+          <span class="text-sm font-medium">Select All</span>
+        </label>
+      </div>
+
       <div class="space-y-2 border rounded-lg p-2 bg-slate-50">
         <div
           v-for="step in availableSteps"
@@ -180,6 +192,16 @@ const showGuide = ref(false)
 
 const hasData = computed(() => logStore.logs.length > 0)
 const availableSteps = computed(() => logStore.availableSteps)
+const isAllSelected = computed(() => availableSteps.value.length > 0 && selectedSteps.value.length === availableSteps.value.length)
+
+const toggleSelectAll = () => {
+  if (isAllSelected.value) {
+    selectedSteps.value = []
+  } else {
+    selectedSteps.value = [...availableSteps.value]
+  }
+  applyFilters()
+}
 
 let searchTimeout = null
 const debouncedSearch = () => {
