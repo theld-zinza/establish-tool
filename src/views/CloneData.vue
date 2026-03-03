@@ -89,10 +89,14 @@ const genUpdateSQL = () => {
   const updateSQLs = cloneStore.visibleTables
     .map(tableKey => cloneStore.generateUpdateSQL(tableKey))
     .filter(Boolean)
+
+  if (updateSQLs.length > 0) {
+    updateSQLs.unshift('set sql_mode = "";')
+  }
   
   generatedSQLs.value = updateSQLs
   
-  if (!updateSQLs.length) {
+  if (updateSQLs.length === 0) {
     toast.error('No SQL generated. Check your data and table selections.')
   }
   
